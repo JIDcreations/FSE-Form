@@ -1,255 +1,318 @@
 /* ── SCROLL-IN ─────────────────────────────────── */
 const fadeIo = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); fadeIo.unobserve(e.target); } });
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+      fadeIo.unobserve(entry.target);
+    }
+  });
 }, { threshold: 0.07 });
+
 document.querySelectorAll('.fade-up').forEach((el, i) => {
   el.style.transitionDelay = `${(i % 3) * 80}ms`;
   fadeIo.observe(el);
 });
 
-/* ── COLOR PICKERS ─────────────────────────────── */
-function linkColor(pid, hid) {
-  const p = document.getElementById(pid), h = document.getElementById(hid);
-  p.addEventListener('input', () => { h.value = p.value; });
-  h.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(h.value)) p.value = h.value; });
-  h.addEventListener('blur',  () => { if (!/^#[0-9a-fA-F]{6}$/.test(h.value)) h.value = p.value; });
-}
-linkColor('primaryPicker', 'primaryHex');
-linkColor('accentPicker',  'accentHex');
-
 /* ── TAG INPUT ─────────────────────────────────── */
-function makeTagInput({ fieldId, inputId, urlMode }) {
+function makeTagInput({ fieldId, inputId }) {
   const field = document.getElementById(fieldId);
   const input = document.getElementById(inputId);
-  const tags  = [];
+  const tags = [];
 
-  function isValidUrl(s) {
-    try { return Boolean(new URL(s)); } catch { return false; }
+  function toMachineString(value) {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, ' and ')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .replace(/_+/g, '_');
   }
 
-  function trunc(s, n) { return s.length > n ? s.slice(0, n) + '…' : s; }
-
   function render() {
-    field.querySelectorAll('.tag-chip').forEach(c => c.remove());
-    tags.forEach((tag, i) => {
-      const invalid = urlMode && !isValidUrl(tag);
+    field.querySelectorAll('.tag-chip').forEach(chip => chip.remove());
+    tags.forEach((tag, index) => {
       const chip = document.createElement('span');
-      chip.className = 'tag-chip' + (invalid ? ' invalid' : '');
-      chip.innerHTML = `<span title="${tag}">${trunc(tag, 32)}</span><span class="tag-chip-x" data-i="${i}">×</span>`;
+      chip.className = 'tag-chip';
+      chip.innerHTML = `<span title="${tag}">${tag}</span><span class="tag-chip-x" data-i="${index}">×</span>`;
       field.insertBefore(chip, input);
     });
   }
 
   function addTag(raw) {
-    const val = raw.trim();
-    if (!val || tags.includes(val)) return;
-    tags.push(val);
+    const value = toMachineString(raw);
+    if (!value || tags.includes(value)) return;
+    tags.push(value);
     render();
   }
 
   function addMany(raw) {
-    raw.split(/[,\n]+/).forEach(s => addTag(s.trim()));
+    raw.split(/[,\n]+/).forEach(part => addTag(part));
   }
 
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      if (input.value.trim()) { addTag(input.value); input.value = ''; }
-    } else if (e.key === 'Backspace' && input.value === '' && tags.length) {
-      tags.pop(); render();
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ',') {
+      event.preventDefault();
+      if (input.value.trim()) {
+        addTag(input.value);
+        input.value = '';
+      }
+    } else if (event.key === 'Backspace' && input.value === '' && tags.length) {
+      tags.pop();
+      render();
     }
   });
 
-  input.addEventListener('paste', e => {
-    e.preventDefault();
-    addMany(e.clipboardData.getData('text'));
+  input.addEventListener('paste', event => {
+    event.preventDefault();
+    addMany(event.clipboardData.getData('text'));
     input.value = '';
   });
 
   input.addEventListener('blur', () => {
-    if (input.value.trim()) { addTag(input.value); input.value = ''; }
-  });
-
-  field.addEventListener('click', e => {
-    if (e.target.classList.contains('tag-chip-x')) {
-      tags.splice(parseInt(e.target.dataset.i), 1); render();
-    } else {
-      input.focus();
+    if (input.value.trim()) {
+      addTag(input.value);
+      input.value = '';
     }
   });
 
+  field.addEventListener('click', event => {
+    if (event.target.classList.contains('tag-chip-x')) {
+      tags.splice(Number.parseInt(event.target.dataset.i, 10), 1);
+      render();
+      return;
+    }
+    input.focus();
+  });
+
   return {
-    getValid: () => urlMode ? tags.filter(isValidUrl) : tags.filter(Boolean)
+    getValues: () => [...tags]
   };
 }
 
-const servicesCtrl = makeTagInput({ fieldId: 'servicesTF', inputId: 'servicesInput', urlMode: false });
-const refsCtrl     = makeTagInput({ fieldId: 'refsTF',      inputId: 'refsInput',     urlMode: true  });
+const servicesCtrl = makeTagInput({ fieldId: 'servicesTF', inputId: 'servicesInput' });
 
-/* ── CONTENT SUGGESTIONS ───────────────────────── */
-const SUGGESTIONS = {
-  type: {
-    portfolio:    ['projects', 'testimonials', 'contact'],
-    landing_page: ['testimonials', 'faq', 'contact'],
-    corporate:    ['team', 'testimonials', 'faq', 'contact'],
-    'e-commerce': ['faq', 'testimonials', 'contact'],
-    blog:         ['blog', 'contact'],
-    saas:         ['faq', 'testimonials', 'contact'],
-    event:        ['events', 'faq', 'contact'],
-    nonprofit:    ['team', 'testimonials', 'contact'],
+/* ── HELPERS ───────────────────────────────────── */
+const currentOutput = {
+  text: ''
+};
+
+const VALID_VALUES = {
+  siteType: ['service_business', 'portfolio_business', 'content_blog', 'company_site'],
+  siteGoal: ['get_leads', 'explain_services', 'show_work', 'publish_articles'],
+  launchPages: ['home', 'about', 'services', 'contact', 'portfolio', 'blog'],
+  homepageSections: ['services_overview', 'explanatory_content', 'testimonials', 'contact_cta', 'portfolio_teaser', 'faq', 'pricing'],
+  serviceHighlightCount: ['1', '2', '3', '4_plus'],
+  primaryCta: ['contact_us', 'request_quote', 'call_us', 'book_now', 'visit_store'],
+  proofAvailable: ['testimonials', 'portfolio_items', 'team_members'],
+  contactMethods: ['phone', 'contact_page', 'form', 'location'],
+  booleanSelect: ['yes', 'no']
+};
+
+const LABELS = {
+  siteType: {
+    service_business: 'Service business',
+    portfolio_business: 'Portfolio business',
+    content_blog: 'Content / blog',
+    company_site: 'Company site'
   },
-  goal: {
-    lead_generation:    ['testimonials', 'faq', 'contact'],
-    portfolio_showcase: ['projects', 'testimonials'],
-    sell_online:        ['faq', 'testimonials', 'contact'],
-    brand_awareness:    ['team', 'blog', 'testimonials'],
-    inform_audience:    ['blog', 'faq'],
-    event_promotion:    ['events', 'contact', 'faq'],
-    recruit_talent:     ['team', 'contact'],
+  siteGoal: {
+    get_leads: 'Get leads',
+    explain_services: 'Explain services',
+    show_work: 'Show work',
+    publish_articles: 'Publish articles'
+  },
+  launchPages: {
+    home: 'Home',
+    about: 'About',
+    services: 'Services',
+    contact: 'Contact',
+    portfolio: 'Portfolio',
+    blog: 'Blog'
+  },
+  homepageSections: {
+    services_overview: 'Services overview',
+    explanatory_content: 'Explanatory content',
+    testimonials: 'Testimonials',
+    contact_cta: 'Contact CTA',
+    portfolio_teaser: 'Portfolio teaser',
+    faq: 'FAQ',
+    pricing: 'Pricing'
+  },
+  primaryCta: {
+    contact_us: 'Contact us',
+    request_quote: 'Request quote',
+    call_us: 'Call us',
+    book_now: 'Book now',
+    visit_store: 'Visit store'
+  },
+  proofAvailable: {
+    testimonials: 'Testimonials',
+    portfolio_items: 'Portfolio items',
+    team_members: 'Team members'
+  },
+  contactMethods: {
+    phone: 'Phone',
+    contact_page: 'Contact page',
+    form: 'Form',
+    location: 'Location'
+  },
+  boolean: {
+    true: 'Yes',
+    false: 'No'
   }
 };
 
-function applySuggestions() {
-  const type = document.getElementById('siteType').value;
-  const goal = document.getElementById('siteGoal').value;
-  const suggested = new Set([
-    ...(SUGGESTIONS.type[type] || []),
-    ...(SUGGESTIONS.goal[goal] || [])
-  ]);
-  if (!suggested.size) return;
-  document.querySelectorAll('.cb-item input[type="checkbox"]').forEach(cb => { cb.checked = false; });
-  suggested.forEach(key => { const cb = document.getElementById('cb_' + key); if (cb) cb.checked = true; });
-  document.getElementById('suggestHint').classList.add('show');
+function getSelectValue(id, validValues) {
+  const value = document.getElementById(id).value.trim();
+  return validValues.includes(value) ? value : '';
 }
 
-document.getElementById('siteType').addEventListener('change', applySuggestions);
-document.getElementById('siteGoal').addEventListener('change', applySuggestions);
+function getCheckedValues(name, validValues) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)]
+    .map(input => input.value.trim())
+    .filter((value, index, arr) => validValues.includes(value) && arr.indexOf(value) === index);
+}
 
-/* ── HELPERS ───────────────────────────────────── */
-const getVal = id => document.getElementById(id).value.trim();
+function getBoolean(id) {
+  const value = getSelectValue(id, VALID_VALUES.booleanSelect);
+  return value === 'yes';
+}
 
 /* ── SUBMIT → JSON ─────────────────────────────── */
-document.getElementById('siteForm').addEventListener('submit', e => {
-  e.preventDefault();
+document.getElementById('siteForm').addEventListener('submit', event => {
+  event.preventDefault();
 
   const cfg = {
-    meta: { generated_at: new Date().toISOString(), builder_version: '1.0.0', source: 'fse-sitebuilder' }
+    meta: {
+      generated_at: new Date().toISOString(),
+      builder_version: '1.0.0',
+      source: 'fse-sitebuilder'
+    },
+    site: {
+      type: getSelectValue('siteType', VALID_VALUES.siteType),
+      goal: getSelectValue('siteGoal', VALID_VALUES.siteGoal),
+      launch_pages: getCheckedValues('launchPages', VALID_VALUES.launchPages),
+      homepage_sections: getCheckedValues('homepageSections', VALID_VALUES.homepageSections),
+      primary_cta: getSelectValue('primaryCta', VALID_VALUES.primaryCta),
+      blog_needed: getBoolean('blogNeeded'),
+      location_based: getBoolean('locationBased')
+    },
+    business: {
+      services: servicesCtrl.getValues().filter(Boolean),
+      service_highlight_count: getSelectValue('serviceHighlightCount', VALID_VALUES.serviceHighlightCount)
+    },
+    content: {
+      proof_available: getCheckedValues('proofAvailable', VALID_VALUES.proofAvailable),
+      contact_methods: getCheckedValues('contactMethods', VALID_VALUES.contactMethods)
+    }
   };
-
-  // Business — omit empty fields
-  const biz = {};
-  const cn = getVal('companyName'); if (cn) biz.company_name = cn;
-  const sc = getVal('sector');      if (sc) biz.sector = sc.toLowerCase();
-  const sv = servicesCtrl.getValid(); if (sv.length) biz.services = sv.map(s => s.toLowerCase());
-  const ta = getVal('targetAudience'); if (ta) biz.target_audience = ta;
-  if (Object.keys(biz).length) cfg.business = biz;
-
-  // Site
-  const site = {};
-  const sg = getVal('siteGoal'); if (sg) site.goal = sg;
-  const st = getVal('siteType'); if (st) site.type = st;
-  if (Object.keys(site).length) cfg.site = site;
-
-  // Style
-  const style = {};
-  const vibe   = getVal('styleVibe');   if (vibe)   style.vibe   = vibe;
-  const mode   = getVal('styleMode');   if (mode)   style.mode   = mode;
-  const energy = getVal('styleEnergy'); if (energy) style.energy = energy;
-  const pc = getVal('primaryHex'); if (pc) style.primary_color = pc;
-  const ac = getVal('accentHex');  if (ac) style.accent_color  = ac;
-  const refs = refsCtrl.getValid(); if (refs.length) style.references = refs;
-  if (Object.keys(style).length) cfg.style = style;
-
-  // Content — only include checked sections
-  const secs = {};
-  let hasSec = false;
-  document.querySelectorAll('.cb-item input[type="checkbox"]').forEach(cb => {
-    if (cb.checked) { secs[cb.value] = true; hasSec = true; }
-  });
-  if (hasSec) cfg.content = { sections: secs };
 
   renderOut(cfg);
 });
 
 /* ── JSON HIGHLIGHT ────────────────────────────── */
-function hl(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/("(?:\\.|[^"\\])*"(?:\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g, m => {
-      if (/^".*":$/.test(m.trim())) return `<span class="j-key">${m}</span>`;
-      if (/^"/.test(m))             return `<span class="j-str">${m}</span>`;
-      if (/true|false/.test(m))     return `<span class="j-bool">${m}</span>`;
-      if (/null/.test(m))           return `<span class="j-null">${m}</span>`;
-      return `<span class="j-num">${m}</span>`;
+function hl(source) {
+  return source
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/("(?:\\.|[^"\\])*"(?:\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g, match => {
+      if (/^".*":$/.test(match.trim())) return `<span class="j-key">${match}</span>`;
+      if (/^"/.test(match)) return `<span class="j-str">${match}</span>`;
+      if (/true|false/.test(match)) return `<span class="j-bool">${match}</span>`;
+      if (/null/.test(match)) return `<span class="j-null">${match}</span>`;
+      return `<span class="j-num">${match}</span>`;
     });
 }
 
 /* ── SUMMARY ───────────────────────────────────── */
-const GOAL_LABELS = {
-  lead_generation: 'Leads genereren', portfolio_showcase: 'Portfolio tonen',
-  sell_online: 'Online verkopen', brand_awareness: 'Naamsbekendheid',
-  inform_audience: 'Informeren / Blog', event_promotion: 'Evenement promoten',
-  recruit_talent: 'Talent aantrekken', other: 'Anders'
-};
-const TYPE_LABELS = {
-  portfolio: 'Portfolio', landing_page: 'Landing Page', corporate: 'Corporate',
-  'e-commerce': 'E-Commerce', blog: 'Blog', saas: 'SaaS', event: 'Evenement',
-  nonprofit: 'Non-Profit', other: 'Anders'
-};
-const SEC_LABELS = {
-  testimonials: 'Testimonials', team: 'Team', faq: 'FAQ',
-  projects: 'Projecten', contact: 'Contact', events: 'Evenementen', blog: 'Blog'
-};
+function labelList(values, labels) {
+  return values.map(value => labels[value] || value);
+}
 
-function buildSummary() {
+function humanizeMachineList(values) {
+  return values.map(value => value.replace(/_/g, ' '));
+}
+
+function buildSummary(cfg) {
   const rows = [];
-  const cn = getVal('companyName'), sc = getVal('sector');
-  if (cn || sc) rows.push({ key: 'Bedrijf', val: [cn, sc].filter(Boolean).join(' — ') });
-  const goal = getVal('siteGoal'); if (goal) rows.push({ key: 'Doel', val: GOAL_LABELS[goal] || goal });
-  const type = getVal('siteType'); if (type) rows.push({ key: 'Type',  val: TYPE_LABELS[type] || type });
-  const styleParts = [getVal('styleVibe'), getVal('styleMode'), getVal('styleEnergy')].filter(Boolean);
-  if (styleParts.length) rows.push({ key: 'Stijl', val: styleParts.join(' / ') });
-  const checked = [...document.querySelectorAll('.cb-item input:checked')].map(cb => SEC_LABELS[cb.value] || cb.value);
-  if (checked.length) rows.push({ key: 'Secties', chips: checked });
 
-  document.getElementById('summaryGrid').innerHTML = rows.map(r =>
-    r.chips
-      ? `<div class="summary-row"><span class="s-key">${r.key}</span><div class="s-chips">${r.chips.map(c => `<span class="s-chip">${c}</span>`).join('')}</div></div>`
-      : `<div class="summary-row"><span class="s-key">${r.key}</span><span class="s-val">${r.val}</span></div>`
+  if (cfg.site.type) rows.push({ key: 'Type', val: LABELS.siteType[cfg.site.type] || cfg.site.type });
+  if (cfg.site.goal) rows.push({ key: 'Doel', val: LABELS.siteGoal[cfg.site.goal] || cfg.site.goal });
+  if (cfg.business.services.length) rows.push({ key: 'Services', chips: humanizeMachineList(cfg.business.services) });
+  if (cfg.business.service_highlight_count) rows.push({ key: 'Highlight', val: cfg.business.service_highlight_count });
+  if (cfg.site.launch_pages.length) rows.push({ key: 'Pagina\'s', chips: labelList(cfg.site.launch_pages, LABELS.launchPages) });
+  if (cfg.site.homepage_sections.length) rows.push({ key: 'Homepage', chips: labelList(cfg.site.homepage_sections, LABELS.homepageSections) });
+  if (cfg.site.primary_cta) rows.push({ key: 'CTA', val: LABELS.primaryCta[cfg.site.primary_cta] || cfg.site.primary_cta });
+  if (cfg.content.proof_available.length) rows.push({ key: 'Proof', chips: labelList(cfg.content.proof_available, LABELS.proofAvailable) });
+  if (cfg.content.contact_methods.length) rows.push({ key: 'Contact', chips: labelList(cfg.content.contact_methods, LABELS.contactMethods) });
+  rows.push({ key: 'Locatie', val: LABELS.boolean[String(cfg.site.location_based)] });
+  rows.push({ key: 'Blog', val: LABELS.boolean[String(cfg.site.blog_needed)] });
+
+  document.getElementById('summaryGrid').innerHTML = rows.map(row =>
+    row.chips
+      ? `<div class="summary-row"><span class="s-key">${row.key}</span><div class="s-chips">${row.chips.map(chip => `<span class="s-chip">${chip}</span>`).join('')}</div></div>`
+      : `<div class="summary-row"><span class="s-key">${row.key}</span><span class="s-val">${row.val}</span></div>`
   ).join('');
 }
 
 /* ── RENDER OUTPUT ─────────────────────────────── */
 function renderOut(cfg) {
-  buildSummary();
-  document.getElementById('jsonOut').innerHTML = hl(JSON.stringify(cfg, null, 2));
-  const sec = document.getElementById('output');
-  const rev = document.getElementById('outReveal');
-  sec.classList.add('show');
-  requestAnimationFrame(() => requestAnimationFrame(() => rev.classList.add('in')));
-  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const outputText = JSON.stringify(cfg, null, 2);
+  currentOutput.text = outputText;
+  buildSummary(cfg);
+  document.getElementById('jsonOut').innerHTML = hl(outputText);
+
+  const section = document.getElementById('output');
+  const reveal = document.getElementById('outReveal');
+  section.classList.add('show');
+  requestAnimationFrame(() => requestAnimationFrame(() => reveal.classList.add('in')));
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 /* ── COPY ──────────────────────────────────────── */
 document.getElementById('copyBtn').addEventListener('click', async () => {
-  const t = document.getElementById('jsonOut').innerText;
-  try { await navigator.clipboard.writeText(t); }
-  catch { const a = document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); document.execCommand('copy'); document.body.removeChild(a); }
+  if (!currentOutput.text) return;
+
+  try {
+    await navigator.clipboard.writeText(currentOutput.text);
+  } catch {
+    const area = document.createElement('textarea');
+    area.value = currentOutput.text;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    document.body.removeChild(area);
+  }
+
   flash('copyBtn', 'Gekopieerd ✓');
 });
 
 /* ── DOWNLOAD ──────────────────────────────────── */
 document.getElementById('downloadBtn').addEventListener('click', () => {
-  const t = document.getElementById('jsonOut').innerText;
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob([t], { type: 'application/json' })),
+  if (!currentOutput.text) return;
+
+  const link = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([currentOutput.text], { type: 'application/json' })),
     download: 'site-config.json'
   });
-  a.click(); URL.revokeObjectURL(a.href);
+
+  link.click();
+  URL.revokeObjectURL(link.href);
   flash('downloadBtn', 'Opgeslagen ✓');
 });
 
-function flash(id, lbl) {
-  const b = document.getElementById(id), o = b.innerHTML;
-  b.textContent = lbl; b.classList.add('ok');
-  setTimeout(() => { b.innerHTML = o; b.classList.remove('ok'); }, 2200);
+function flash(id, label) {
+  const button = document.getElementById(id);
+  const original = button.innerHTML;
+  button.textContent = label;
+  button.classList.add('ok');
+
+  setTimeout(() => {
+    button.innerHTML = original;
+    button.classList.remove('ok');
+  }, 2200);
 }

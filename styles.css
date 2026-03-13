@@ -476,6 +476,8 @@ footer a:hover { color: var(--mint); }
 }
 .tag-inner::placeholder { color: var(--faint); }
 .field-hint { font-size: 11px; color: var(--faint); margin-top: 5px; }
+.on-purple .field-hint,
+.field-hint.on-dark { color: rgba(223,208,243,.72); }
 
 /* ── STYLE HELPER ────────────────────── */
 .style-helper {

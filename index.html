@@ -70,23 +70,23 @@
     <div class="how-grid fade-up">
       <div class="how-step">
         <div class="step-circle">1</div>
-        <div class="step-name">Bedrijfsinfo</div>
-        <p class="step-desc">Vertel ons wie je bent, wat je doet en voor wie je het doet.</p>
+        <div class="step-name">Site basis</div>
+        <p class="step-desc">Kies het type site, het hoofddoel en de belangrijkste diensten of offers.</p>
       </div>
       <div class="how-step">
         <div class="step-circle">2</div>
-        <div class="step-name">Website doel</div>
-        <p class="step-desc">Wat moet je website bereiken? Leads, verkoop of zichtbaarheid?</p>
+        <div class="step-name">Pagina's</div>
+        <p class="step-desc">Bepaal welke launch pages en homepage secties nodig zijn bij de start.</p>
       </div>
       <div class="how-step">
         <div class="step-circle">3</div>
-        <div class="step-name">Stijl & kleur</div>
-        <p class="step-desc">Welke richting past bij jouw merk? Minimaal, bold of elegant?</p>
+        <div class="step-name">Conversie</div>
+        <p class="step-desc">Geef aan welke CTA, bewijscontent en contactkanalen beschikbaar zijn.</p>
       </div>
       <div class="how-step">
         <div class="step-circle">4</div>
-        <div class="step-name">Inhoud</div>
-        <p class="step-desc">Welke pagina's en secties heb je nodig op je nieuwe site?</p>
+        <div class="step-name">Launch scope</div>
+        <p class="step-desc">Rond af met lokale relevantie en of blog of nieuws meteen nodig is.</p>
       </div>
     </div>
   </div>
@@ -101,31 +101,49 @@
       <div class="s-layout fade-up">
         <div>
           <div class="s-num" aria-hidden="true">01</div>
-          <div class="sec-eyebrow">Bedrijf</div>
-          <h2 class="sec-title">Vertel ons over<br>je bedrijf</h2>
-          <p class="s-desc">We willen begrijpen wie je bent, wat je doet en voor wie. Dit helpt ons jouw website perfect af te stemmen op jouw doelen.</p>
+          <div class="sec-eyebrow">Site basis</div>
+          <h2 class="sec-title">Wat wordt er<br>gelanceerd?</h2>
+          <p class="s-desc">We verzamelen alleen de input die later nuttig is om de juiste FSE patronen en basisstructuur te selecteren.</p>
         </div>
         <div class="stack">
           <div class="f-row">
             <div class="field">
-              <label class="f-lbl" for="companyName">Bedrijfsnaam</label>
-              <input type="text" id="companyName" placeholder="bv. Acme Studio" autocomplete="off" />
+              <label class="f-lbl" for="siteType">Type site bij launch</label>
+              <select id="siteType">
+                <option value="">Kies een type…</option>
+                <option value="service_business">Service business</option>
+                <option value="portfolio_business">Portfolio business</option>
+                <option value="content_blog">Content / blog</option>
+                <option value="company_site">Company site</option>
+              </select>
             </div>
             <div class="field">
-              <label class="f-lbl" for="sector">Sector</label>
-              <input type="text" id="sector" placeholder="bv. Creatief bureau" autocomplete="off" />
+              <label class="f-lbl" for="siteGoal">Hoofddoel van de site</label>
+              <select id="siteGoal">
+                <option value="">Kies een doel…</option>
+                <option value="get_leads">Get leads</option>
+                <option value="explain_services">Explain services</option>
+                <option value="show_work">Show work</option>
+                <option value="publish_articles">Publish articles</option>
+              </select>
             </div>
           </div>
           <div class="field">
-            <span class="f-lbl">Diensten</span>
+            <span class="f-lbl">Hoofdservices / offers</span>
             <div class="tag-field" id="servicesTF">
-              <input class="tag-inner" id="servicesInput" placeholder="Type een dienst, druk Enter of komma…" autocomplete="off" />
+              <input class="tag-inner" id="servicesInput" placeholder="Type een service of offer, druk Enter of komma…" autocomplete="off" />
             </div>
-            <span class="field-hint">Enter of komma voegt een dienst toe · Backspace verwijdert</span>
+            <span class="field-hint">Splits items met Enter of komma. We slaan dit op als array van machine-friendly labels.</span>
           </div>
           <div class="field">
-            <label class="f-lbl" for="targetAudience">Doelgroep</label>
-            <input type="text" id="targetAudience" placeholder="bv. KMO's in de creatieve sector" autocomplete="off" />
+            <label class="f-lbl" for="serviceHighlightCount">Aantal services / offers dat benadrukt moet worden</label>
+            <select id="serviceHighlightCount">
+              <option value="">Kies een aantal…</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4_plus">4+</option>
+            </select>
           </div>
         </div>
       </div>
@@ -138,113 +156,198 @@
       <div class="s-layout fade-up">
         <div>
           <div class="s-num" aria-hidden="true">02</div>
-          <div class="sec-eyebrow">Website</div>
-          <h2 class="sec-title">Wat moet je<br>website doen?</h2>
-          <p class="s-desc">Elke succesvolle website heeft een duidelijk doel. Wat wil je bereiken met jouw nieuwe online aanwezigheid?</p>
+          <div class="sec-eyebrow">Structuur</div>
+          <h2 class="sec-title">Welke pagina's en<br>secties zijn nodig?</h2>
+          <p class="s-desc">Deze keuzes helpen om de juiste page patterns en homepage opbouw voor de eerste launch te bepalen.</p>
         </div>
         <div class="stack">
           <div class="field">
-            <label class="f-lbl" for="siteGoal">Website doel</label>
-            <select id="siteGoal">
-              <option value="">Kies een doel…</option>
-              <option value="lead_generation">Leads genereren</option>
-              <option value="portfolio_showcase">Portfolio tonen</option>
-              <option value="sell_online">Online verkopen</option>
-              <option value="brand_awareness">Naamsbekendheid vergroten</option>
-              <option value="inform_audience">Informeren / Blog</option>
-              <option value="event_promotion">Evenement promoten</option>
-              <option value="recruit_talent">Talent aantrekken</option>
-              <option value="other">Anders</option>
-            </select>
+            <span class="f-lbl">Benodigde pagina's bij launch</span>
+            <div class="cb-grid">
+              <div class="cb-item">
+                <input type="checkbox" id="page_home" name="launchPages" value="home">
+                <label class="cb-lbl" for="page_home">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Home</span><span class="cb-ico">⌂</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="page_about" name="launchPages" value="about">
+                <label class="cb-lbl" for="page_about">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">About</span><span class="cb-ico">◔</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="page_services" name="launchPages" value="services">
+                <label class="cb-lbl" for="page_services">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Services</span><span class="cb-ico">◫</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="page_contact" name="launchPages" value="contact">
+                <label class="cb-lbl" for="page_contact">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Contact</span><span class="cb-ico">✉</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="page_portfolio" name="launchPages" value="portfolio">
+                <label class="cb-lbl" for="page_portfolio">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Portfolio</span><span class="cb-ico">◻</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="page_blog" name="launchPages" value="blog">
+                <label class="cb-lbl" for="page_blog">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Blog</span><span class="cb-ico">✎</span>
+                </label>
+              </div>
+            </div>
+            <span class="field-hint on-dark">Selecteer alleen de pagina's die meteen nodig zijn bij launch.</span>
           </div>
           <div class="field">
-            <label class="f-lbl" for="siteType">Type website</label>
-            <select id="siteType">
-              <option value="">Kies een type…</option>
-              <option value="portfolio">Portfolio</option>
-              <option value="landing_page">Landing Page</option>
-              <option value="corporate">Corporate</option>
-              <option value="e-commerce">E-Commerce</option>
-              <option value="blog">Blog / Magazine</option>
-              <option value="saas">SaaS / Product</option>
-              <option value="event">Evenement</option>
-              <option value="nonprofit">Non-Profit</option>
-              <option value="other">Anders</option>
-            </select>
+            <span class="f-lbl">Homepage secties</span>
+            <div class="cb-grid">
+              <div class="cb-item">
+                <input type="checkbox" id="section_services_overview" name="homepageSections" value="services_overview">
+                <label class="cb-lbl" for="section_services_overview">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Services overview</span><span class="cb-ico">◫</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="section_explanatory_content" name="homepageSections" value="explanatory_content">
+                <label class="cb-lbl" for="section_explanatory_content">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Explanatory content</span><span class="cb-ico">≡</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="section_testimonials" name="homepageSections" value="testimonials">
+                <label class="cb-lbl" for="section_testimonials">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Testimonials</span><span class="cb-ico">★</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="section_contact_cta" name="homepageSections" value="contact_cta">
+                <label class="cb-lbl" for="section_contact_cta">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Contact CTA</span><span class="cb-ico">→</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="section_portfolio_teaser" name="homepageSections" value="portfolio_teaser">
+                <label class="cb-lbl" for="section_portfolio_teaser">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Portfolio teaser</span><span class="cb-ico">◻</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="section_faq" name="homepageSections" value="faq">
+                <label class="cb-lbl" for="section_faq">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">FAQ</span><span class="cb-ico">?</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="section_pricing" name="homepageSections" value="pricing">
+                <label class="cb-lbl" for="section_pricing">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Pricing</span><span class="cb-ico">€</span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 03 STYLE — white -->
+  <!-- 03 CONVERSION — white -->
   <section id="s-style">
     <div class="wrap">
       <div class="s-layout fade-up">
         <div>
           <div class="s-num" aria-hidden="true">03</div>
-          <div class="sec-eyebrow">Stijl</div>
-          <h2 class="sec-title">Hoe moet jouw<br>website eruitzien?</h2>
-          <p class="s-desc">Van minimaal tot bold — jouw merkidentiteit bepaalt de visuele richting van je website.</p>
+          <div class="sec-eyebrow">Conversie</div>
+          <h2 class="sec-title">Hoe moet de site<br>bezoekers laten handelen?</h2>
+          <p class="s-desc">We vragen alleen naar de hoofd-CTA, beschikbaar bewijs en contactpaden die voor patroonselectie relevant zijn.</p>
         </div>
         <div class="stack">
-          <div class="f-row">
-            <div class="field">
-              <label class="f-lbl" for="styleVibe">Vibe</label>
-              <select id="styleVibe">
-                <option value="">Kies…</option>
-                <option value="minimal">Minimaal</option>
-                <option value="bold">Bold</option>
-                <option value="elegant">Elegant</option>
-                <option value="playful">Speels</option>
-                <option value="corporate">Corporate</option>
-              </select>
-            </div>
-            <div class="field">
-              <label class="f-lbl" for="styleMode">Modus</label>
-              <select id="styleMode">
-                <option value="">Kies…</option>
-                <option value="light">Licht</option>
-                <option value="dark">Donker</option>
-                <option value="editorial">Editoriaal</option>
-                <option value="brutalist">Brutalistisch</option>
-              </select>
-            </div>
-          </div>
           <div class="field">
-            <label class="f-lbl" for="styleEnergy">Energie</label>
-            <select id="styleEnergy">
-              <option value="">Kies…</option>
-              <option value="calm">Rustig &amp; helder</option>
-              <option value="energetic">Energiek &amp; gedurfd</option>
-              <option value="professional">Professioneel &amp; vertrouwd</option>
-              <option value="creative">Creatief &amp; uniek</option>
-              <option value="warm">Warm &amp; persoonlijk</option>
+            <label class="f-lbl" for="primaryCta">Primaire call to action</label>
+            <select id="primaryCta">
+              <option value="">Kies een CTA…</option>
+              <option value="contact_us">Contact us</option>
+              <option value="request_quote">Request quote</option>
+              <option value="call_us">Call us</option>
+              <option value="book_now">Book now</option>
+              <option value="visit_store">Visit store</option>
             </select>
           </div>
-          <p class="style-helper">✦ &nbsp;Deze keuzes vertalen we naar een kleurenpalet, typografische stijl en visuele richting voor je site.</p>
-          <div class="f-row">
-            <div class="field">
-              <label class="f-lbl" for="primaryHex">Primaire kleur</label>
-              <div class="color-row">
-                <input type="color" id="primaryPicker" value="#6C4CDF" />
-                <input type="text"  id="primaryHex" value="#6C4CDF" placeholder="#000000" maxlength="7" autocomplete="off" />
+          <div class="field">
+            <span class="f-lbl">Beschikbare proof content</span>
+            <div class="cb-grid">
+              <div class="cb-item">
+                <input type="checkbox" id="proof_testimonials" name="proofAvailable" value="testimonials">
+                <label class="cb-lbl" for="proof_testimonials">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Testimonials</span><span class="cb-ico">★</span>
+                </label>
               </div>
-            </div>
-            <div class="field">
-              <label class="f-lbl" for="accentHex">Accentkleur</label>
-              <div class="color-row">
-                <input type="color" id="accentPicker" value="#71FFD0" />
-                <input type="text"  id="accentHex" value="#71FFD0" placeholder="#000000" maxlength="7" autocomplete="off" />
+              <div class="cb-item">
+                <input type="checkbox" id="proof_portfolio_items" name="proofAvailable" value="portfolio_items">
+                <label class="cb-lbl" for="proof_portfolio_items">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Portfolio items</span><span class="cb-ico">◻</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="proof_team_members" name="proofAvailable" value="team_members">
+                <label class="cb-lbl" for="proof_team_members">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Team members</span><span class="cb-ico">◈</span>
+                </label>
               </div>
             </div>
           </div>
           <div class="field">
-            <span class="f-lbl">Inspiratie &amp; referenties</span>
-            <div class="tag-field" id="refsTF">
-              <input class="tag-inner" id="refsInput" placeholder="Plak een URL en druk Enter…" autocomplete="off" />
+            <span class="f-lbl">Contactmethodes</span>
+            <div class="cb-grid">
+              <div class="cb-item">
+                <input type="checkbox" id="contact_phone" name="contactMethods" value="phone">
+                <label class="cb-lbl" for="contact_phone">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Phone</span><span class="cb-ico">☎</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="contact_contact_page" name="contactMethods" value="contact_page">
+                <label class="cb-lbl" for="contact_contact_page">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Contact page</span><span class="cb-ico">↗</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="contact_form" name="contactMethods" value="form">
+                <label class="cb-lbl" for="contact_form">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Form</span><span class="cb-ico">✎</span>
+                </label>
+              </div>
+              <div class="cb-item">
+                <input type="checkbox" id="contact_location" name="contactMethods" value="location">
+                <label class="cb-lbl" for="contact_location">
+                  <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="cb-name">Location</span><span class="cb-ico">⌖</span>
+                </label>
+              </div>
             </div>
-            <span class="field-hint">Voer volledige URLs in — bv. https://linear.app · Ongeldige URLs worden rood</span>
           </div>
         </div>
       </div>
@@ -257,63 +360,26 @@
       <div class="s-layout fade-up">
         <div>
           <div class="s-num" aria-hidden="true">04</div>
-          <div class="sec-eyebrow">Inhoud</div>
-          <h2 class="sec-title">Welke secties<br>heb je nodig?</h2>
-          <p class="s-desc">Selecteer de pagina's en content blokken die je wil opnemen in je nieuwe website.</p>
+          <div class="sec-eyebrow">Launch scope</div>
+          <h2 class="sec-title">Wat moet er nog<br>mee in versie één?</h2>
+          <p class="s-desc">Deze laatste keuzes helpen bepalen of lokale patronen en een blog- of nieuwsstructuur meteen nodig zijn.</p>
         </div>
-        <div class="suggest-hint" id="suggestHint">
-          <span>✦</span>
-          <span>We hebben secties voorgeselecteerd op basis van jouw keuzes. Pas gerust aan.</span>
-        </div>
-        <div class="cb-grid">
-          <div class="cb-item">
-            <input type="checkbox" id="cb_testimonials" value="testimonials">
-            <label class="cb-lbl" for="cb_testimonials">
-              <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span class="cb-name">Testimonials</span><span class="cb-ico">★</span>
-            </label>
+        <div class="stack">
+          <div class="field">
+            <label class="f-lbl" for="locationBased">Is dit een lokale / locatiegebonden business?</label>
+            <select id="locationBased">
+              <option value="">Kies…</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
           </div>
-          <div class="cb-item">
-            <input type="checkbox" id="cb_team" value="team">
-            <label class="cb-lbl" for="cb_team">
-              <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span class="cb-name">Team</span><span class="cb-ico">◈</span>
-            </label>
-          </div>
-          <div class="cb-item">
-            <input type="checkbox" id="cb_faq" value="faq">
-            <label class="cb-lbl" for="cb_faq">
-              <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span class="cb-name">FAQ</span><span class="cb-ico">?</span>
-            </label>
-          </div>
-          <div class="cb-item">
-            <input type="checkbox" id="cb_projects" value="projects">
-            <label class="cb-lbl" for="cb_projects">
-              <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span class="cb-name">Projecten</span><span class="cb-ico">◻</span>
-            </label>
-          </div>
-          <div class="cb-item">
-            <input type="checkbox" id="cb_contact" value="contact">
-            <label class="cb-lbl" for="cb_contact">
-              <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span class="cb-name">Contact</span><span class="cb-ico">✉</span>
-            </label>
-          </div>
-          <div class="cb-item">
-            <input type="checkbox" id="cb_events" value="events">
-            <label class="cb-lbl" for="cb_events">
-              <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span class="cb-name">Evenementen</span><span class="cb-ico">◷</span>
-            </label>
-          </div>
-          <div class="cb-item">
-            <input type="checkbox" id="cb_blog" value="blog">
-            <label class="cb-lbl" for="cb_blog">
-              <span class="cb-box"><svg class="cb-chk" width="10" height="8" fill="none" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span class="cb-name">Blog</span><span class="cb-ico">✏</span>
-            </label>
+          <div class="field">
+            <label class="f-lbl" for="blogNeeded">Moet er bij launch een blog of nieuwssectie zijn?</label>
+            <select id="blogNeeded">
+              <option value="">Kies…</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
           </div>
         </div>
       </div>
